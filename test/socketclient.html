@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Test</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>WebSocket Test</h1>
+  <div id="status">Disconnected</div>
+  <div id="log"></div>
+
+  <script>
+    const log = (msg) => {
+      document.getElementById('log').innerHTML += `<p>${msg}</p>`;
+      console.log(msg);
+    };
+
+    const socket = io('http://localhost:3333', {
+      transports: ['websocket', 'polling'],
+      reconnectionAttempts: 5,
+      timeout: 10000
+    });
+
+    socket.on('connect', () => {
+      document.getElementById('status').textContent = 'Connected';
+      document.getElementById('status').style.color = 'green';
+      log('Connected to WebSocket server');
+    });
+
+    socket.on('connect_error', (err) => {
+      log(`Connection error: ${err.message}`);
+    });
+
+    socket.on('mqttData', (data) => {
+      log(`Received MQTT data: ${JSON.stringify(data)}`);
+    });
+
+    socket.on('disconnect', (reason) => {
+      document.getElementById('status').textContent = 'Disconnected';
+      document.getElementById('status').style.color = 'red';
+      log(`Disconnected: ${reason}`);
+    });
+  </script>
+</body>
+</html>
