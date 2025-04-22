@@ -5,7 +5,9 @@ import { AppService } from './app.service';
 import { MqttModule } from './mqtt/mqtt.module';
 import { ConfigModule } from '@nestjs/config';
 import { WebsocketGateway } from './websocket.gateway';
-import { DataModule } from './data/data.module'; // Import DataModule
+import { DataModule } from './data/data.module'; 
+import { AuthModule } from './auth/auth.module'; 
+
 
 @Module({
   imports: [
@@ -13,7 +15,8 @@ import { DataModule } from './data/data.module'; // Import DataModule
       isGlobal: true,
     }),
     MqttModule,
-    DataModule, // Thêm DataModule vào imports
+    DataModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, WebsocketGateway],

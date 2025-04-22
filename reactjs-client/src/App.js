@@ -1,4 +1,4 @@
-// Tạo file App.js
+// src/App.js
 import React, { useState, useEffect } from 'react';
 import GaugeChart from 'react-gauge-chart';
 import mqtt from 'mqtt';

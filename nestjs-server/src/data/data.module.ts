@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EnvironmentData, EnvironmentDataSchema } from './schemas/environment-data.schema';
 import { DataService } from './data.service';
+import { DataController } from './data.controller';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { DataService } from './data.service';
       { name: EnvironmentData.name, schema: EnvironmentDataSchema },
     ]),
   ],
+  controllers: [DataController],
   providers: [DataService],
   exports: [DataService],
 })

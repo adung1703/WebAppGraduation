@@ -1,10 +1,11 @@
-// ./src/websocket.gateway.ts
+// src/websocket.gateway.ts
 import { WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Injectable, Logger } from '@nestjs/common';
 
 @WebSocketGateway({
   cors: { origin: '*' },
+  path: '/ws-live-data' 
 })
 @Injectable()
 export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
