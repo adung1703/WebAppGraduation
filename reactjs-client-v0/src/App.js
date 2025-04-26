@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import GaugeChart from 'react-gauge-chart';
 import mqtt from 'mqtt';
+import './App.css';
 
-const Live = () => {
+const App = () => {
   // State lưu trữ dữ liệu từ MQTT
   const [sensorData, setSensorData] = useState({
     timestamp: '',
@@ -82,7 +83,7 @@ const Live = () => {
 
   return (
     <div className="dashboard">
-      <h1>Dữ liệu môi trường tại tòa B1</h1>
+      <h1>MQTT Sensor Dashboard</h1>
       <p className="timestamp">Last update: {sensorData.timestamp}</p>
 
       <div className="gauges-container">
@@ -194,4 +195,4 @@ const Live = () => {
   );
 };
 
-export default Live;
+export default App;

@@ -39,6 +39,7 @@ export class AuthService {
     const payload = { username };
     
     // Tạo JWT token
+    // Thêm hạn chế thời gian sống cho token
     const access_token = this.jwtService.sign(payload);
     
     return {
