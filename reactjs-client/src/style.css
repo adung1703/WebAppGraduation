@@ -281,17 +281,17 @@ button:focus {
 }
 
 .main-name {
-  color: #cd5ff8;
+  color: #2bec3b;
 }
 
 .Typewriter__wrapper {
   font-size: 2.2em !important;
-  color: #be6adf !important;
+  color: #ca3c3c !important;
   font-weight: 600 !important;
 }
 .Typewriter__cursor {
   font-size: 2.4em !important;
-  color: #b562d6 !important;
+  color: #d66262 !important;
 }
 
 @media (max-width: 767px) {
@@ -740,4 +740,15 @@ button:focus {
 }
 .fork-btn-inner::after {
   display: none !important;
+}
+
+.backdrop-blur {
+  backdrop-filter: blur(5px) !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Tăng cường hiệu ứng cho trải nghiệm người dùng tốt hơn */
+.modal-content {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  border: none;
 }

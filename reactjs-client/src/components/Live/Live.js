@@ -2,62 +2,65 @@
 import React, { useState, useEffect } from 'react';
 import GaugeChart from 'react-gauge-chart';
 import mqtt from 'mqtt';
+import useMqttService from './MqttService'; 
 
 const Live = () => {
   // State lưu trữ dữ liệu từ MQTT
-  const [sensorData, setSensorData] = useState({
-    timestamp: '',
-    temperature: 0,
-    humidity: 0,
-    broadband: 0,
-    infrared: 0,
-    lux: 0,
-    UVA: 0,
-    UVB: 0,
-    UVI: 0
-  });
+  // const [sensorData, setSensorData] = useState({
+  //   timestamp: '',
+  //   temperature: 0,
+  //   humidity: 0,
+  //   broadband: 0,
+  //   infrared: 0,
+  //   lux: 0,
+  //   UVA: 0,
+  //   UVB: 0,
+  //   UVI: 0
+  // });
 
-  // Cấu hình MQTT client
-  useEffect(() => {
-    // Thay thế URL của MQTT broker của bạn tại đây
-    // Thông tin HiveMQ Cloud
-    const mqttServer = '694db29983f8479bafa92337d5de0db1.s1.eu.hivemq.cloud';
-    const mqttPort = 8884;
-    const mqttUser = 'adung1703';
-    const mqttPassword = 'Adung1703';
-    const mqttTopic = 'esp32/test';
+  // // Cấu hình MQTT client
+  // useEffect(() => {
+  //   // Thay thế URL của MQTT broker của bạn tại đây
+  //   // Thông tin HiveMQ Cloud
+  //   const mqttServer = '694db29983f8479bafa92337d5de0db1.s1.eu.hivemq.cloud';
+  //   const mqttPort = 8884;
+  //   const mqttUser = 'adung1703';
+  //   const mqttPassword = 'Adung1703';
+  //   const mqttTopic = 'esp32/test';
 
-    const mqttOptions = {
-      port: mqttPort,
-      username: mqttUser,
-      password: mqttPassword,
-      clean: true,
-      protocol: 'wss', // Sử dụng MQTT over TLS/SSL (mqtts)
-      rejectUnauthorized: false // Chỉ dùng cho test, bỏ qua xác thực chứng chỉ
-    };
+  //   const mqttOptions = {
+  //     port: mqttPort,
+  //     username: mqttUser,
+  //     password: mqttPassword,
+  //     clean: true,
+  //     protocol: 'wss', // Sử dụng MQTT over TLS/SSL (mqtts)
+  //     rejectUnauthorized: false // Chỉ dùng cho test, bỏ qua xác thực chứng chỉ
+  //   };
 
-    const mqttClient = mqtt.connect(`wss://${mqttServer}:${mqttPort}/mqtt`, mqttOptions);
+  //   const mqttClient = mqtt.connect(`wss://${mqttServer}:${mqttPort}/mqtt`, mqttOptions);
 
-    mqttClient.on('connect', () => {
-      console.log('Connected to MQTT broker');
-      // Thay thế tên topic của bạn tại đây
-      mqttClient.subscribe(mqttTopic);
-    });
+  //   mqttClient.on('connect', () => {
+  //     console.log('Connected to MQTT broker');
+  //     // Thay thế tên topic của bạn tại đây
+  //     mqttClient.subscribe(mqttTopic);
+  //   });
 
-    mqttClient.on('message', (topic, message) => {
-      try {
-        const data = JSON.parse(message.toString());
-        console.log('Received data:', data);
-        setSensorData(data);
-      } catch (error) {
-        console.error('Error parsing MQTT message:', error);
-      }
-    });
+  //   mqttClient.on('message', (topic, message) => {
+  //     try {
+  //       const data = JSON.parse(message.toString());
+  //       console.log('Received data:', data);
+  //       setSensorData(data);
+  //     } catch (error) {
+  //       console.error('Error parsing MQTT message:', error);
+  //     }
+  //   });
 
-    return () => {
-      mqttClient.end();
-    };
-  }, []);
+  //   return () => {
+  //     mqttClient.end();
+  //   };
+  // }, []);
+
+  const sensorData = useMqttService(); 
 
   // Hàm chuyển đổi giá trị để phù hợp với thang đo gauge (0-1)
   const normalizeTemperature = (temp) => {

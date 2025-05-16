@@ -1,23 +1,31 @@
+// src/components/History/History.js
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Table, Pagination, Modal, Form, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Alert, Button } from "react-bootstrap";
 import Particle from "../Particle";
 import axios from "axios";
+import DataTable from "./DataTable";
+import PaginationControls from "./PaginationControls";
+import LoginModal from "./LoginModal";
+import NotificationModal from "./NotificationModal";
 
 function History() {
   const [historyData, setHistoryData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginForm, setLoginForm] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [loginError, setLoginError] = useState(null);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notification, setNotification] = useState({
+    title: "",
+    message: "",
+    variant: "success"
+  });
 
   // Fetch historical data with authentication
   const fetchHistoryData = async (page = 1) => {
     setLoading(true);
     setError(null);
-
     try {
       const token = localStorage.getItem("authToken");
       if (!token) {
@@ -25,24 +33,32 @@ function History() {
         setLoading(false);
         return;
       }
-
       const response = await axios.get(`http://localhost:3333/history-data?page=${page}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-
+      
       setHistoryData(response.data.data);
       setTotalPages(response.data.totalPages);
       setCurrentPage(response.data.page);
       setLoading(false);
     } catch (err) {
       console.error("Error fetching history data:", err);
-      
+
       if (err.response && err.response.status === 401) {
-        // Token expired or invalid
         localStorage.removeItem("authToken");
         setShowLoginModal(true);
+        setError("Authentication expired. Please login again.");
+
+        // Hiển thị thông báo token hết hạn
+        setNotification({
+          title: "Session Expired",
+          message: "Your login session has expired. Please login again to continue.",
+          variant: "danger"
+        });
+        setShowNotification(true);
+
       } else {
         setError("Failed to fetch history data. Please try again later.");
       }
@@ -50,93 +66,45 @@ function History() {
     }
   };
 
-  // Handle login submission
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoginError(null);
-
-    try {
-      const response = await axios.post("http://localhost:3333/auth/login", loginForm);
-      
-      if (response.data && response.data.access_token) {
-        console.log("Response data:", response.data);
-        localStorage.setItem("authToken", response.data.access_token);
-        setShowLoginModal(false);
-        fetchHistoryData(currentPage);
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      setLoginError("Invalid credentials. Please try again.");
-    }
-  };
-
-  // Handle pagination
+  // Handle page change
   const handlePageChange = (page) => {
     setCurrentPage(page);
     fetchHistoryData(page);
   };
 
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setLoginForm(prev => ({ ...prev, [name]: value }));
+  // Handle modal close
+  const handleCloseModal = () => {
+    setShowLoginModal(false);
+    // Redirect or show message if needed when user cancels login
+    setError("You need to be logged in to view historical data.");
   };
+
+  // Handle notification close
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+
+  // Handle successful login
+  const handleLoginSuccess = (token) => {
+    localStorage.setItem("authToken", token);
+    setShowLoginModal(false);
+
+    // Tải lại dữ liệu sau khi đăng nhập
+    fetchHistoryData(currentPage);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    setShowLoginModal(true);
+    setHistoryData([]);
+    setCurrentPage(1);
+    setError("You have been logged out. Please login again.");
+  }
 
   // Initial data fetch
   useEffect(() => {
     fetchHistoryData();
   }, []);
-
-  // Format date for display
-  const formatDate = (dateString) => {
-    const options = { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    };
-    return new Date(dateString).toLocaleString(undefined, options);
-  };
-
-  // Generate pagination items
-  const renderPaginationItems = () => {
-    const items = [];
-    
-    // Previous button
-    items.push(
-      <Pagination.Prev 
-        key="prev" 
-        onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-      />
-    );
-    
-    // Page numbers
-    for (let page = 1; page <= totalPages; page++) {
-      items.push(
-        <Pagination.Item
-          key={page}
-          active={page === currentPage}
-          onClick={() => handlePageChange(page)}
-        >
-          {page}
-        </Pagination.Item>
-      );
-    }
-    
-    // Next button
-    items.push(
-      <Pagination.Next 
-        key="next" 
-        onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      />
-    );
-    
-    return items;
-  };
 
   return (
     <Container fluid className="history-section">
@@ -145,11 +113,21 @@ function History() {
         <h1 className="project-heading">
           Historical <strong className="purple">Data </strong>
         </h1>
-        
+
         {error && (
-          <Alert variant="danger">{error}</Alert>
+          <div className="text-center my-5">
+            <Alert variant="danger">{error}</Alert>
+            <Button
+              variant="primary"
+              onClick={() => setShowLoginModal(true)}
+              className="mt-3"
+              style={{ position: "relative", zIndex: 1001 }}
+            >
+              Login
+            </Button>
+          </div>
         )}
-        
+
         {loading ? (
           <div className="text-center my-5">
             <div className="spinner-border text-light" role="status">
@@ -158,84 +136,60 @@ function History() {
           </div>
         ) : (
           <>
-            <div className="table-responsive mt-4">
-              <Table striped bordered hover variant="dark">
-                <thead>
-                  <tr>
-                    <th>Date/Time</th>
-                    <th>Temp (°C)</th>
-                    <th>Humidity (%)</th>
-                    <th>Lux</th>
-                    <th>Broadband</th>
-                    <th>Infrared</th>
-                    <th>UVA</th>
-                    <th>UVB</th>
-                    <th>UVI</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {historyData.map((record) => (
-                    <tr key={record._id}>
-                      <td>{formatDate(record.createdAt)}</td>
-                      <td>{record.temperature}</td>
-                      <td>{record.humidity}</td>
-                      <td>{record.lux}</td>
-                      <td>{record.broadband}</td>
-                      <td>{record.infrared}</td>
-                      <td>{record.UVA}</td>
-                      <td>{record.UVB}</td>
-                      <td>{record.UVI}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-            
-            <Row className="mt-4">
-              <Col className="d-flex justify-content-center">
-                <Pagination>{renderPaginationItems()}</Pagination>
-              </Col>
-            </Row>
+            {historyData.length > 0 ? (
+              <>
+                <div className="table-responsive mt-4">
+                  <DataTable data={historyData} />
+                </div>
+
+                <Row className="mt-4">
+                  <Col className="d-flex justify-content-center">
+                    <PaginationControls
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                    />
+                  </Col>
+                </Row>
+                <Button
+                  variant="secondary"
+                  onClick={handleLogout}
+                  className="mt-3"
+                  style={{ position: "relative", zIndex: 1001 }}
+                >
+                  Log out
+                </Button>
+              </>
+            ) : !error && !loading && (
+              <div className="text-center my-5">
+                {/* <Alert variant="info">No data available. Please login to view historical data.</Alert> */}
+                <Button
+                  variant="primary"
+                  onClick={() => setShowLoginModal(true)}
+                  className="mt-3"
+                >
+                  Login
+                </Button>
+              </div>
+            )}
           </>
         )}
-      </Container>
 
-      {/* Login Modal */}
-      <Modal show={showLoginModal} onHide={() => {}} backdrop="static" keyboard={false}>
-        <Modal.Header>
-          <Modal.Title>Login Required</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {loginError && <Alert variant="danger">{loginError}</Alert>}
-          <Form onSubmit={handleLogin}>
-            <Form.Group className="mb-3">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                name="username"
-                value={loginForm.username}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                name="password"
-                value={loginForm.password}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-            <div className="d-grid gap-2">
-              <Button variant="primary" type="submit">
-                Login
-              </Button>
-            </div>
-          </Form>
-        </Modal.Body>
-      </Modal>
+        <LoginModal
+          show={showLoginModal}
+          onLoginSuccess={handleLoginSuccess}
+          onClose={handleCloseModal}
+        />
+
+        <NotificationModal
+          show={showNotification}
+          onClose={handleCloseNotification}
+          title={notification.title}
+          message={notification.message}
+          variant={notification.variant}
+        />
+
+      </Container>
     </Container>
   );
 }
