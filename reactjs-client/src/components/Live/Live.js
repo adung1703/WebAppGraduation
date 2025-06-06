@@ -1,7 +1,7 @@
 // src/components/Live/Live.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import GaugeChart from 'react-gauge-chart';
-import mqtt from 'mqtt';
+// import mqtt from 'mqtt';
 import useMqttService from './MqttService'; 
 
 const Live = () => {

@@ -105,7 +105,7 @@ function History() {
   // Initial data fetch
   useEffect(() => {
     fetchHistoryData();
-  }, []);
+  }, [fetchHistoryData]);
 
   return (
     <Container fluid className="history-section">
