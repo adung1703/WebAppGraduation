@@ -16,11 +16,13 @@ const useMqttService = () => {
   });
 
   useEffect(() => {
-    const mqttServer = '694db29983f8479bafa92337d5de0db1.s1.eu.hivemq.cloud';
-    const mqttPort = 8884;
-    const mqttUser = 'adung1703';
-    const mqttPassword = 'Adung1703';
-    const mqttTopic = 'esp32/test';
+    const mqttServer = process.env.REACT_APP_MQTT_SERVER;
+    const mqttPort = process.env.REACT_APP_MQTT_PORT;
+    const mqttUser = process.env.REACT_APP_MQTT_USER;
+    const mqttPassword = process.env.REACT_APP_MQTT_PASSWORD;
+    const mqttTopic = process.env.REACT_APP_MQTT_TOPIC;
+
+    console.log(mqttServer, mqttPort, mqttUser, mqttPassword, mqttTopic);
 
     const mqttOptions = {
       port: mqttPort,
