@@ -1,5 +1,5 @@
 // src/components/History/History.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Container, Row, Col, Alert, Button } from "react-bootstrap";
 import Particle from "../Particle";
 import axios from "axios";
@@ -23,8 +23,9 @@ function History() {
   });
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
   // Fetch historical data with authentication
-  const fetchHistoryData = async (page = 1) => {
+  const fetchHistoryData = useCallback(async (page = 1) => {
     setLoading(true);
     setError(null);
     try {
@@ -55,7 +56,7 @@ function History() {
         // Hiển thị thông báo token hết hạn
         setNotification({
           title: "Session Expired",
-          message: "Your login session has expired. Please login again to continue.",
+          message: "Your login session has expired. Please login again.",
           variant: "danger"
         });
         setShowNotification(true);
@@ -65,7 +66,7 @@ function History() {
       }
       setLoading(false);
     }
-  };
+  }, [backendUrl, setLoading, setError, setShowLoginModal, setHistoryData, setTotalPages, setCurrentPage, setNotification, setShowNotification]);
 
   // Handle page change
   const handlePageChange = (page) => {
