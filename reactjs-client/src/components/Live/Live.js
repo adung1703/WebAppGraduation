@@ -5,60 +5,6 @@ import mqtt from 'mqtt';
 import useMqttService from './MqttService'; 
 
 const Live = () => {
-  // State lưu trữ dữ liệu từ MQTT
-  // const [sensorData, setSensorData] = useState({
-  //   timestamp: '',
-  //   temperature: 0,
-  //   humidity: 0,
-  //   broadband: 0,
-  //   infrared: 0,
-  //   lux: 0,
-  //   UVA: 0,
-  //   UVB: 0,
-  //   UVI: 0
-  // });
-
-  // // Cấu hình MQTT client
-  // useEffect(() => {
-  //   // Thay thế URL của MQTT broker của bạn tại đây
-  //   // Thông tin HiveMQ Cloud
-  //   const mqttServer = '694db29983f8479bafa92337d5de0db1.s1.eu.hivemq.cloud';
-  //   const mqttPort = 8884;
-  //   const mqttUser = 'adung1703';
-  //   const mqttPassword = 'Adung1703';
-  //   const mqttTopic = 'esp32/test';
-
-  //   const mqttOptions = {
-  //     port: mqttPort,
-  //     username: mqttUser,
-  //     password: mqttPassword,
-  //     clean: true,
-  //     protocol: 'wss', // Sử dụng MQTT over TLS/SSL (mqtts)
-  //     rejectUnauthorized: false // Chỉ dùng cho test, bỏ qua xác thực chứng chỉ
-  //   };
-
-  //   const mqttClient = mqtt.connect(`wss://${mqttServer}:${mqttPort}/mqtt`, mqttOptions);
-
-  //   mqttClient.on('connect', () => {
-  //     console.log('Connected to MQTT broker');
-  //     // Thay thế tên topic của bạn tại đây
-  //     mqttClient.subscribe(mqttTopic);
-  //   });
-
-  //   mqttClient.on('message', (topic, message) => {
-  //     try {
-  //       const data = JSON.parse(message.toString());
-  //       console.log('Received data:', data);
-  //       setSensorData(data);
-  //     } catch (error) {
-  //       console.error('Error parsing MQTT message:', error);
-  //     }
-  //   });
-
-  //   return () => {
-  //     mqttClient.end();
-  //   };
-  // }, []);
 
   const sensorData = useMqttService(); 
 
@@ -88,7 +34,7 @@ const Live = () => {
       <h1 className="project-heading">
         Thông số môi trường hiện tại ở văn phòng <strong className="purple">Khoa KTMT </strong>
       </h1>
-      <p className="timestamp">Last update: {sensorData.timestamp}</p>
+      <p className="timestamp">Last update: {sensorData.timestamp || new Date().toLocaleString()}</p>
 
       <div className="gauges-container">
         <div className="gauge-card">

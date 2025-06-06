@@ -22,6 +22,7 @@ function History() {
     variant: "success"
   });
 
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
   // Fetch historical data with authentication
   const fetchHistoryData = async (page = 1) => {
     setLoading(true);
@@ -33,7 +34,7 @@ function History() {
         setLoading(false);
         return;
       }
-      const response = await axios.get(`http://localhost:3333/history-data?page=${page}`, {
+      const response = await axios.get(`${backendUrl}history-data?page=${page}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

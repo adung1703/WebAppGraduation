@@ -16,12 +16,16 @@ const LoginModal = ({ show, onLoginSuccess, onClose }) => {
     variant: "success"
   });
 
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
+  console.log("Backend URL:", backendUrl);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoginError(null);
 
     try {
-      const response = await axios.post("http://localhost:3333/auth/login", { username, password });
+      const response = await axios.post(`${backendUrl}auth/login`, { username, password });
       if (response.data && response.data.access_token) {
         // Ẩn modal đăng nhập ngay lập tức
         onLoginSuccess(response.data.access_token);

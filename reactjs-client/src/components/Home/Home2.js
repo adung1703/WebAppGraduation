@@ -19,11 +19,11 @@ function Home2() {
               LET ME <span className="purple"> INTRODUCE </span> MYSELF
             </h1>
             <p className="home-about-body">
-              Mình là Dũng, sinh viên ngành Kỹ thuật máy tính K66 🤷‍♂️
+              I am Dũng, a Computer Engineering student from Cohort 66 🤷‍♂️
               <br />
               <br />I am fluent in classics like
               <i>
-                <b className="purple"> C++, Javascript and Go. </b>
+                <b className="purple"> C++, Javascript and Java. </b>
               </i>
               <br />
               <br />
