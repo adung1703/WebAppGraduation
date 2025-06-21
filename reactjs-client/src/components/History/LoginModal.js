@@ -16,6 +16,8 @@ const LoginModal = ({ show, onLoginSuccess, onClose }) => {
     variant: "success"
   });
 
+  const [loading, setLoading] = useState(false);
+
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
   console.log("Backend URL:", backendUrl);
@@ -23,6 +25,7 @@ const LoginModal = ({ show, onLoginSuccess, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoginError(null);
+    setLoading(true);
 
     try {
       const response = await axios.post(`${backendUrl}auth/login`, { username, password });
@@ -50,6 +53,8 @@ const LoginModal = ({ show, onLoginSuccess, onClose }) => {
         variant: "danger"
       });
       setShowNotification(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -85,11 +90,14 @@ const LoginModal = ({ show, onLoginSuccess, onClose }) => {
               />
             </Form.Group>
             <div className="d-flex justify-content-between">
-              <Button variant="secondary" onClick={onClose}>
+              <Button variant="secondary" onClick={onClose} disabled={loading}>
                 Close
               </Button>
-              <Button variant="primary" type="submit">
-                Login
+              <Button variant="primary" type="submit" disabled={loading}>
+                {loading ? (
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                ) : null}
+                {loading ? 'Logging in...' : 'Login'}
               </Button>
             </div>
           </Form>
