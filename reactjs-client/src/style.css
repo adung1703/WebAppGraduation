@@ -243,6 +243,7 @@ button:focus {
   }
 }
 #tsparticles {
+  z-index: -1 !important;
   position: fixed !important;
   background-repeat: no-repeat !important;
   background-size: cover !important;
@@ -751,4 +752,47 @@ button:focus {
 .modal-content {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   border: none;
+}
+
+/* Trong file CSS của bạn (ví dụ: App.css) */
+
+.image-container {
+  position: relative; /* Quan trọng để pseudo-element định vị tương đối */
+  display: inline-block; /* Để container chỉ rộng bằng ảnh */
+}
+
+.image-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-shadow: 0 0 50px 30px rgba(0, 0, 0, 0.8) inset; /* Hiệu ứng vignette */
+  pointer-events: none; /* Đảm bảo lớp phủ không chặn sự kiện chuột */
+  border-radius: 0px; /* Bo nhẹ các góc của vignette nếu muốn, hoặc 0 để giữ góc vuông */
+}
+
+.image-container::after { /* Dùng ::after thay vì ::before nếu bạn muốn 2 lớp phủ */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, transparent 60%, rgba(0,0,0,0.8) 100%);
+  pointer-events: none;
+  /* border-radius: 5px;  */
+}
+
+.chart-card {
+  background: rgba(34, 34, 59, 0.85); /* Nền tối nhẹ, có thể chỉnh lại */
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 18px 12px 8px 12px;
+  margin-bottom: 32px;
+  transition: box-shadow 0.2s;
+}
+.chart-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
 }
