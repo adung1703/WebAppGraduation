@@ -1,6 +1,6 @@
 // src/components/History/History.js
 import React, { useState, useEffect, useCallback } from "react";
-import { Container, Row, Col, Alert, Button, Card } from "react-bootstrap";
+import { Container, Row, Col, Alert, Button } from "react-bootstrap";
 import Particle from "../Particle";
 import axios from "axios";
 import DataTable from "./DataTable";
